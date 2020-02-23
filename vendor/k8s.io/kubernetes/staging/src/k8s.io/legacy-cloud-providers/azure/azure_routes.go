@@ -45,7 +45,7 @@ const (
 
 // ListRoutes lists all managed routes that belong to the specified clusterName
 func (az *Cloud) ListRoutes(ctx context.Context, clusterName string) ([]*cloudprovider.Route, error) {
-	klog.V(10).Infof("ListRoutes: START clusterName=%q", clusterName)
+	klog.V(1).Infof("ListRoutes: START clusterName=%q", clusterName)
 	routeTable, existsRouteTable, err := az.getRouteTable()
 	routes, err := processRoutes(routeTable, existsRouteTable, err)
 	if err != nil {
@@ -87,7 +87,7 @@ func processRoutes(routeTable network.RouteTable, exists bool, err error) ([]*cl
 		for i, route := range *routeTable.Routes {
 			instance := mapRouteNameToNodeName(*route.Name)
 			cidr := *route.AddressPrefix
-			klog.V(10).Infof("ListRoutes: * instance=%q, cidr=%q", instance, cidr)
+			klog.V(1).Infof("ListRoutes: * instance=%q, cidr=%q", instance, cidr)
 
 			kubeRoutes[i] = &cloudprovider.Route{
 				Name:            *route.Name,
@@ -97,7 +97,7 @@ func processRoutes(routeTable network.RouteTable, exists bool, err error) ([]*cl
 		}
 	}
 
-	klog.V(10).Info("ListRoutes: FINISH")
+	klog.V(1).Info("ListRoutes: FINISH")
 	return kubeRoutes, nil
 }
 
@@ -118,7 +118,7 @@ func (az *Cloud) createRouteTable() error {
 		RouteTablePropertiesFormat: &network.RouteTablePropertiesFormat{},
 	}
 
-	klog.V(3).Infof("createRouteTableIfNotExists: creating routetable. routeTableName=%q", az.RouteTableName)
+	klog.V(1).Infof("createRouteTableIfNotExists: creating routetable. routeTableName=%q", az.RouteTableName)
 	err := az.CreateOrUpdateRouteTable(routeTable)
 	if err != nil {
 		return err
@@ -157,17 +157,17 @@ func (az *Cloud) CreateRoute(ctx context.Context, clusterName string, nameHint s
 		return err
 	}
 	// select a private ip that matches family of the cidr
-	klog.V(4).Infof("CreateRoute: create route instance=%q cidr=%q is in dual stack mode", kubeRoute.TargetNode, kubeRoute.DestinationCIDR)
+	klog.V(1).Infof("CreateRoute: create route instance=%q cidr=%q is in dual stack mode", kubeRoute.TargetNode, kubeRoute.DestinationCIDR)
 	CIDRv6 := utilnet.IsIPv6CIDRString(string(kubeRoute.DestinationCIDR))
 	nodePrivateIPs, err := az.getPrivateIPsForMachine(kubeRoute.TargetNode)
 	if nil != err {
-		klog.V(3).Infof("CreateRoute: create route: failed(GetPrivateIPsByNodeName) instance=%q cidr=%q with error=%v", kubeRoute.TargetNode, kubeRoute.DestinationCIDR, err)
+		klog.V(1).Infof("CreateRoute: create route: failed(GetPrivateIPsByNodeName) instance=%q cidr=%q with error=%v", kubeRoute.TargetNode, kubeRoute.DestinationCIDR, err)
 		return err
 	}
 
 	targetIP, err = findFirstIPByFamily(nodePrivateIPs, CIDRv6)
 	if nil != err {
-		klog.V(3).Infof("CreateRoute: create route: failed(findFirstIpByFamily) instance=%q cidr=%q with error=%v", kubeRoute.TargetNode, kubeRoute.DestinationCIDR, err)
+		klog.V(1).Infof("CreateRoute: create route: failed(findFirstIpByFamily) instance=%q cidr=%q with error=%v", kubeRoute.TargetNode, kubeRoute.DestinationCIDR, err)
 		return err
 	}
 	routeName := mapNodeNameToRouteName(kubeRoute.TargetNode, string(kubeRoute.DestinationCIDR))
@@ -180,7 +180,7 @@ func (az *Cloud) CreateRoute(ctx context.Context, clusterName string, nameHint s
 		},
 	}
 
-	klog.V(3).Infof("CreateRoute: creating route: instance=%q cidr=%q", kubeRoute.TargetNode, kubeRoute.DestinationCIDR)
+	klog.V(1).Infof("CreateRoute: creating route: instance=%q cidr=%q", kubeRoute.TargetNode, kubeRoute.DestinationCIDR)
 	err = az.CreateOrUpdateRoute(route)
 	if err != nil {
 		return err

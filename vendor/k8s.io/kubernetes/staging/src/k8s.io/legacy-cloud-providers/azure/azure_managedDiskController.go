@@ -72,7 +72,7 @@ type ManagedDiskOptions struct {
 //CreateManagedDisk : create managed disk
 func (c *ManagedDiskController) CreateManagedDisk(options *ManagedDiskOptions) (string, error) {
 	var err error
-	klog.V(4).Infof("azureDisk - creating new managed Name:%s StorageAccountType:%s Size:%v", options.DiskName, options.StorageAccountType, options.SizeGB)
+	klog.V(1).Infof("azureDisk - creating new managed Name:%s StorageAccountType:%s Size:%v", options.DiskName, options.StorageAccountType, options.SizeGB)
 
 	var createZones *[]string
 	if len(options.AvailabilityZone) > 0 {
@@ -306,7 +306,7 @@ func (c *Cloud) GetAzureDiskLabels(diskURI string) (map[string]string, error) {
 
 	// Check whether availability zone is specified.
 	if disk.Zones == nil || len(*disk.Zones) == 0 {
-		klog.V(4).Infof("Azure disk %q is not zoned", diskName)
+		klog.V(1).Infof("Azure disk %q is not zoned", diskName)
 		return nil, nil
 	}
 
@@ -317,7 +317,7 @@ func (c *Cloud) GetAzureDiskLabels(diskURI string) (map[string]string, error) {
 	}
 
 	zone := c.makeZone(c.Location, zoneID)
-	klog.V(4).Infof("Got zone %q for Azure disk %q", zone, diskName)
+	klog.V(1).Infof("Got zone %q for Azure disk %q", zone, diskName)
 	labels := map[string]string{
 		v1.LabelZoneRegion:        c.Location,
 		v1.LabelZoneFailureDomain: zone,

@@ -56,7 +56,7 @@ func (ss *scaleSet) makeVmssVMName(scaleSetName, instanceID string) string {
 func extractVmssVMName(name string) (string, string, error) {
 	split := strings.SplitAfter(name, vmssNameSeparator)
 	if len(split) < 2 {
-		klog.V(3).Infof("Failed to extract vmssVMName %q", name)
+		klog.V(1).Infof("Failed to extract vmssVMName %q", name)
 		return "", "", ErrorNotVmssInstance
 	}
 

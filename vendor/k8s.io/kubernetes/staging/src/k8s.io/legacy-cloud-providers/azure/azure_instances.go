@@ -48,7 +48,7 @@ func (az *Cloud) NodeAddresses(ctx context.Context, name types.NodeName) ([]v1.N
 		return nil, err
 	}
 	if unmanaged {
-		klog.V(4).Infof("NodeAddresses: omitting unmanaged node %q", name)
+		klog.V(1).Infof("NodeAddresses: omitting unmanaged node %q", name)
 		return nil, nil
 	}
 
@@ -155,7 +155,7 @@ func (az *Cloud) NodeAddressesByProviderID(ctx context.Context, providerID strin
 
 	// Returns nil for unmanaged nodes because azure cloud provider couldn't fetch information for them.
 	if az.IsNodeUnmanagedByProviderID(providerID) {
-		klog.V(4).Infof("NodeAddressesByProviderID: omitting unmanaged node %q", providerID)
+		klog.V(1).Infof("NodeAddressesByProviderID: omitting unmanaged node %q", providerID)
 		return nil, nil
 	}
 
@@ -176,7 +176,7 @@ func (az *Cloud) InstanceExistsByProviderID(ctx context.Context, providerID stri
 
 	// Returns true for unmanaged nodes because azure cloud provider always assumes them exists.
 	if az.IsNodeUnmanagedByProviderID(providerID) {
-		klog.V(4).Infof("InstanceExistsByProviderID: assuming unmanaged node %q exists", providerID)
+		klog.V(1).Infof("InstanceExistsByProviderID: assuming unmanaged node %q exists", providerID)
 		return true, nil
 	}
 
@@ -224,7 +224,7 @@ func (az *Cloud) InstanceShutdownByProviderID(ctx context.Context, providerID st
 
 		return false, err
 	}
-	klog.V(5).Infof("InstanceShutdownByProviderID gets power status %q for node %q", powerStatus, nodeName)
+	klog.V(1).Infof("InstanceShutdownByProviderID gets power status %q for node %q", powerStatus, nodeName)
 
 	return strings.ToLower(powerStatus) == vmPowerStateStopped || strings.ToLower(powerStatus) == vmPowerStateDeallocated, nil
 }
@@ -254,7 +254,7 @@ func (az *Cloud) InstanceID(ctx context.Context, name types.NodeName) (string, e
 	}
 	if unmanaged {
 		// InstanceID is same with nodeName for unmanaged nodes.
-		klog.V(4).Infof("InstanceID: getting ID %q for unmanaged node %q", name, name)
+		klog.V(1).Infof("InstanceID: getting ID %q for unmanaged node %q", name, name)
 		return nodeName, nil
 	}
 
@@ -318,7 +318,7 @@ func (az *Cloud) InstanceTypeByProviderID(ctx context.Context, providerID string
 
 	// Returns "" for unmanaged nodes because azure cloud provider couldn't fetch information for them.
 	if az.IsNodeUnmanagedByProviderID(providerID) {
-		klog.V(4).Infof("InstanceTypeByProviderID: omitting unmanaged node %q", providerID)
+		klog.V(1).Infof("InstanceTypeByProviderID: omitting unmanaged node %q", providerID)
 		return "", nil
 	}
 
@@ -341,7 +341,7 @@ func (az *Cloud) InstanceType(ctx context.Context, name types.NodeName) (string,
 		return "", err
 	}
 	if unmanaged {
-		klog.V(4).Infof("InstanceType: omitting unmanaged node %q", name)
+		klog.V(1).Infof("InstanceType: omitting unmanaged node %q", name)
 		return "", nil
 	}
 

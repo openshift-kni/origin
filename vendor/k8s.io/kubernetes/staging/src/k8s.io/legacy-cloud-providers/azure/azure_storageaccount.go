@@ -103,7 +103,7 @@ func (az *Cloud) EnsureStorageAccount(accountName, accountType, accountKind, res
 
 		if len(accounts) > 0 {
 			accountName = accounts[0].Name
-			klog.V(4).Infof("found a matching account %s type %s location %s", accounts[0].Name, accounts[0].StorageType, accounts[0].Location)
+			klog.V(1).Infof("found a matching account %s type %s location %s", accounts[0].Name, accounts[0].StorageType, accounts[0].Location)
 		}
 
 		if len(accountName) == 0 {

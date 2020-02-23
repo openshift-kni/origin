@@ -97,7 +97,7 @@ func (f *azureFileClient) resizeFileShare(accountName, accountKey, name string, 
 	if err = share.SetProperties(nil); err != nil {
 		return fmt.Errorf("failed to set quota on file share %s, err: %v", name, err)
 	}
-	klog.V(4).Infof("resize file share completed, accountName: %s, shareName: %s, sizeGiB: %d", accountName, name, sizeGiB)
+	klog.V(1).Infof("resize file share completed, accountName: %s, shareName: %s, sizeGiB: %d", accountName, name, sizeGiB)
 	return nil
 }
 

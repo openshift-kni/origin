@@ -101,13 +101,13 @@ func (c *BlobDiskController) CreateVolume(blobName, accountName, accountType, lo
 		return "", "", 0, err
 	}
 
-	klog.V(4).Infof("azureDisk - created vhd blob uri: %s", diskURI)
+	klog.V(1).Infof("azureDisk - created vhd blob uri: %s", diskURI)
 	return diskName, diskURI, requestGB, err
 }
 
 // DeleteVolume deletes a VHD blob
 func (c *BlobDiskController) DeleteVolume(diskURI string) error {
-	klog.V(4).Infof("azureDisk - begin to delete volume %s", diskURI)
+	klog.V(1).Infof("azureDisk - begin to delete volume %s", diskURI)
 	accountName, blob, err := c.common.cloud.getBlobNameAndAccountFromURI(diskURI)
 	if err != nil {
 		return fmt.Errorf("failed to parse vhd URI %v", err)
@@ -127,7 +127,7 @@ func (c *BlobDiskController) DeleteVolume(diskURI string) error {
 		}
 		return fmt.Errorf("failed to delete vhd %v, account %s, blob %s, err: %v", diskURI, accountName, blob, err)
 	}
-	klog.V(4).Infof("azureDisk - blob %s deleted", diskURI)
+	klog.V(1).Infof("azureDisk - blob %s deleted", diskURI)
 	return nil
 
 }
@@ -157,7 +157,7 @@ func (c *BlobDiskController) createVHDBlobDisk(blobClient azstorage.BlobStorageC
 
 	tags := make(map[string]string)
 	tags["createdby"] = "k8sAzureDataDisk"
-	klog.V(4).Infof("azureDisk - creating page blob %s in container %s account %s", vhdName, containerName, accountName)
+	klog.V(1).Infof("azureDisk - creating page blob %s in container %s account %s", vhdName, containerName, accountName)
 
 	blob := container.GetBlobReference(vhdName)
 	blob.Properties.ContentLength = vhdSize
@@ -219,7 +219,7 @@ func (c *BlobDiskController) deleteVhdBlob(accountName, accountKey, blobName str
 
 //CreateBlobDisk : create a blob disk in a node
 func (c *BlobDiskController) CreateBlobDisk(dataDiskName string, storageAccountType storage.SkuName, sizeGB int) (string, error) {
-	klog.V(4).Infof("azureDisk - creating blob data disk named:%s on StorageAccountType:%s", dataDiskName, storageAccountType)
+	klog.V(1).Infof("azureDisk - creating blob data disk named:%s on StorageAccountType:%s", dataDiskName, storageAccountType)
 
 	c.initStorageAccounts()
 
@@ -253,7 +253,7 @@ func (c *BlobDiskController) DeleteBlobDisk(diskURI string) error {
 	_, ok := c.accounts[storageAccountName]
 	if !ok {
 		// the storage account is specified by user
-		klog.V(4).Infof("azureDisk - deleting volume %s", diskURI)
+		klog.V(1).Infof("azureDisk - deleting volume %s", diskURI)
 		return c.DeleteVolume(diskURI)
 	}
 
@@ -262,7 +262,7 @@ func (c *BlobDiskController) DeleteBlobDisk(diskURI string) error {
 		return err
 	}
 
-	klog.V(4).Infof("azureDisk - About to delete vhd file %s on storage account %s container %s", vhdName, storageAccountName, vhdContainerName)
+	klog.V(1).Infof("azureDisk - About to delete vhd file %s on storage account %s container %s", vhdName, storageAccountName, vhdContainerName)
 
 	container := blobSvc.GetContainerReference(vhdContainerName)
 	blob := container.GetBlobReference(vhdName)
@@ -372,7 +372,7 @@ func (c *BlobDiskController) ensureDefaultContainer(storageAccountName string) e
 			_, provisionState, err := c.getStorageAccountState(storageAccountName)
 
 			if err != nil {
-				klog.V(4).Infof("azureDisk - GetStorageAccount:%s err %s", storageAccountName, err.Error())
+				klog.V(1).Infof("azureDisk - GetStorageAccount:%s err %s", storageAccountName, err.Error())
 				return false, nil // error performing the query - retryable
 			}
 
@@ -380,7 +380,7 @@ func (c *BlobDiskController) ensureDefaultContainer(storageAccountName string) e
 				return true, nil
 			}
 
-			klog.V(4).Infof("azureDisk - GetStorageAccount:%s not ready yet (not flagged Succeeded by ARM)", storageAccountName)
+			klog.V(1).Infof("azureDisk - GetStorageAccount:%s not ready yet (not flagged Succeeded by ARM)", storageAccountName)
 			return false, nil // back off and see if the account becomes ready on next retry
 		})
 		// we have failed to ensure that account is ready for us to create
@@ -435,7 +435,7 @@ func (c *BlobDiskController) getDiskCount(SAName string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	klog.V(4).Infof("azure-Disk -  refreshed data count for account %s and found %v", SAName, len(response.Blobs))
+	klog.V(1).Infof("azure-Disk -  refreshed data count for account %s and found %v", SAName, len(response.Blobs))
 	c.accounts[SAName].diskCount = int32(len(response.Blobs))
 
 	return int(c.accounts[SAName].diskCount), nil

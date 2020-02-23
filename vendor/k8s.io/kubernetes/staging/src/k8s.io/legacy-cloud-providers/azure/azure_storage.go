@@ -49,7 +49,7 @@ func (az *Cloud) CreateFileShare(shareName, accountName, accountType, accountKin
 	if err := az.createFileShare(account, key, shareName, requestGiB); err != nil {
 		return "", "", fmt.Errorf("failed to create share %s in account %s: %v", shareName, account, err)
 	}
-	klog.V(4).Infof("created share %s in account %s", shareName, account)
+	klog.V(1).Infof("created share %s in account %s", shareName, account)
 	return account, key, nil
 }
 
@@ -58,7 +58,7 @@ func (az *Cloud) DeleteFileShare(accountName, accountKey, shareName string) erro
 	if err := az.deleteFileShare(accountName, accountKey, shareName); err != nil {
 		return err
 	}
-	klog.V(4).Infof("share %s deleted", shareName)
+	klog.V(1).Infof("share %s deleted", shareName)
 	return nil
 }
 

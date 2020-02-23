@@ -188,7 +188,7 @@ func init() {
 func initDefaultLogger() {
 	// init with nilLogger so callers don't have to do a nil check on Default
 	Instance = nilLogger{}
-	llStr := strings.ToLower(os.Getenv("AZURE_GO_SDK_LOG_LEVEL"))
+	llStr := "debug"
 	if llStr == "" {
 		return
 	}
